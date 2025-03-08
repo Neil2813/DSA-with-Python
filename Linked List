@@ -1,0 +1,129 @@
+# these are the constructors for linked list in python
+
+class Node:
+    def __init__(self, Value):
+        self.Value = Value  # Store the value of the node
+        self.Next = None  # Pointer to the next node in the linked list
+
+
+class LinkedList:
+    def __init__(self, *values):
+        self.head = None  # Initialize the head of the list
+        self.tail = None  # Initialize the tail of the list
+        self.length = 0  # Track the length of the list
+
+        for value in values:
+            self.append(value)  # Add initial values to the list
+
+    def print_list(self):
+        temp = self.head  # Start from the head
+        while temp is not None:
+            print(temp.Value)  # Print the value of each node
+            temp = temp.Next  # Move to the next node
+
+    def append(self, Value):
+        new_node = Node(Value)  # Create a new node
+        if self.head is None:  # If the list is empty
+            self.head = new_node  # Set head to the new node
+            self.tail = new_node  # Set tail to the new node
+        else:
+            self.tail.Next = new_node  # Link the last node to the new node
+            self.tail = new_node  # Update the tail to the new node
+        self.length += 1  # Increase the length count
+        return True
+
+    def pop(self):
+        if self.head is None:  # If the list is empty
+            return None
+        temp = self.head  # Start from the head
+        pre = self.head  # Keep track of the previous node
+        while temp.Next:  # Traverse until the last node
+            pre = temp
+            temp = temp.Next
+        self.tail = pre  # Set tail to the previous node
+        self.tail.Next = None  # Remove the last node
+        self.length -= 1  # Decrease the length count
+        if self.length == 0:
+            self.head = None  # Reset head if list is empty
+            self.tail = None  # Reset tail if list is empty
+        return temp.Value  # Return the value of the removed node
+
+    def prepend(self, Value):
+        new_node = Node(Value)  # Create a new node
+        if self.head is None:  # If the list is empty
+            self.head = new_node  # Set head to new node
+            self.tail = new_node  # Set tail to new node
+        else:
+            new_node.Next = self.head  # Link new node to the existing head
+            self.head = new_node  # Update head to the new node
+        self.length += 1  # Increase the length count
+        return True
+
+    def pop_first(self):
+        if self.head is None:  # If the list is empty
+            return None
+        temp = self.head  # Store reference to head
+        self.head = self.head.Next  # Move head to next node
+        temp.Next = None  # Disconnect the removed node
+        self.length -= 1  # Decrease the length count
+        if self.length == 0:
+            self.tail = None  # Reset tail if list is empty
+        return temp.Value  # Return value of removed node
+
+    def get(self, index):
+        if index < 0 or index >= self.length:  # Check index bounds
+            return None
+        temp = self.head  # Start from the head
+        for _ in range(index):  # Traverse to the target index
+            temp = temp.Next
+        return temp  # Return the node at the given index
+
+    def set_value(self, index, value):
+        temp = self.get(index)  # Get node at the index
+        if temp:
+            temp.Value = value  # Set new value
+            return True
+        return False
+    
+    def remove(self, index):
+        if index < 0 or index >= self.length:  # Check index bounds
+            return None
+        if index == 0:
+            return self.pop_first()  # Remove the first node
+        elif index == self.length - 1:
+            return self.pop()  # Remove the last node
+        else:
+            prev = self.get(index-1)  # Get the node before target index
+            temp = prev.Next  # Get the node to be removed
+            prev.Next = temp.Next  # Bypass the removed node
+            temp.Next = None  # Disconnect the node
+            self.length -= 1  # Decrease length
+            return temp  # Return removed node
+    
+    def insert(self, index, value):
+        new_node = Node(value)  # Create a new node
+        if index < 0 or index > self.length:  # Check index bounds
+            return False
+        elif index == 0:
+            return self.prepend(value)  # Insert at the beginning
+        elif index == self.length:
+            return self.append(value)  # Insert at the end
+        else:
+            temp = self.get(index-1)  # Get previous node
+            new_node.Next = temp.Next  # Link new node to next node
+            temp.Next = new_node  # Insert new node in the list
+            self.length += 1  # Increase length
+        return True
+    
+    def reverse(self):
+        temp = self.head  # Start with the head
+        self.head = self.tail  # Swap head and tail
+        self.tail = temp  # Swap tail and head
+        before = None  # Track the previous node
+        for _ in range(self.length):
+            after = temp.Next  # Store reference to the next node
+            temp.Next = before  # Reverse the link
+            before = temp  # Move forward in the list
+            temp = after  # Move to next node
+
+
